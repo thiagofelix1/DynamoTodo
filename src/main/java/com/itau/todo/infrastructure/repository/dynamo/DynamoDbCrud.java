@@ -1,16 +1,19 @@
-package com.itau.todo.infrastructure.repository.dynamoDb;
+package com.itau.todo.infrastructure.repository.dynamo;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDeleteExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-import com.itau.todo.domain.entities.Quadro;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
+
 @EnableScan
-public class DynamoDbCrud<T>{
+public class DynamoDbCrud<T> {
+
     @Autowired
     DynamoDBMapper dynamoDBMapper;
 
@@ -30,17 +33,21 @@ public class DynamoDbCrud<T>{
     }
 
     public List<T> findAll() {
-        return null;
+        return new ArrayList<>();
     }
 
     public void update(String id, T t) {
-        dynamoDBMapper.save(t,
-                new DynamoDBSaveExpression()
-                        .withExpectedEntry("id",
-                                new ExpectedAttributeValue(
-                                        new AttributeValue().withS(id)
-                                )));
+        dynamoDBMapper.save(t, new DynamoDBSaveExpression()
+                .withExpectedEntry("id", new ExpectedAttributeValue(
+                        new AttributeValue().withS(id))));
     }
 
+    public void delete(String id) {
+        // TODO: getById quebrando o metodo (DynamoDBMappingException: Quadro[tipo]; no RANGE key value present)
+        T item = getById(id);
+        dynamoDBMapper.delete(item, new DynamoDBDeleteExpression()
+                .withExpectedEntry("id", new ExpectedAttributeValue(
+                        new AttributeValue().withS(id))));
+    }
 
 }

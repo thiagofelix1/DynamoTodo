@@ -24,4 +24,10 @@ public class QuadroController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(quadro);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> apagar(@PathVariable String id) {
+        quadroRepository.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

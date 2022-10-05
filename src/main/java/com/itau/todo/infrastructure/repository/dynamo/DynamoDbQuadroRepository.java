@@ -1,8 +1,7 @@
-package com.itau.todo.infrastructure.repository.dynamoDb;
+package com.itau.todo.infrastructure.repository.dynamo;
 
 import com.itau.todo.domain.entities.Quadro;
 import com.itau.todo.domain.repository.QuadroRepository;
-import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -10,8 +9,4 @@ public class DynamoDbQuadroRepository extends DynamoDbCrud<Quadro> implements Qu
 
     public DynamoDbQuadroRepository() { super(Quadro.class); }
 
-    @Override
-    public void delete(String id) {
-
-    }
 }
