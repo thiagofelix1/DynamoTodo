@@ -3,24 +3,27 @@ package com.itau.todo.infrastructure.repository.dynamo;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDeleteExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @EnableScan
-public class DynamoDbCrud<T> {
+public abstract class DynamoDbCrud<T> {
 
     @Autowired
     DynamoDBMapper dynamoDBMapper;
 
     final Class<T> typeParameterClass;
 
-    public DynamoDbCrud(Class<T> typeParameterClass) {
+    private final String rangeKey;
+
+    protected DynamoDbCrud(Class<T> typeParameterClass, String rangeKey) {
         this.typeParameterClass = typeParameterClass;
+        this.rangeKey = rangeKey;
     }
 
     public T save(T t) {
@@ -28,28 +31,41 @@ public class DynamoDbCrud<T> {
         return t;
     }
 
-    // TODO: verificar se manteremos ou não
-    public T getById(String id) {
-        return dynamoDBMapper.load(typeParameterClass, id);
+    public Optional<T> getByHashKeyAndRangeKey(String hashKey, String sortKey) {
+        return Optional.ofNullable(dynamoDBMapper.load(typeParameterClass, hashKey, sortKey));
     }
 
     public List<T> findAll() {
-        return new ArrayList<>();
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":tipo", new AttributeValue().withS(rangeKey));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("tipo = :tipo")
+                .withExpressionAttributeValues(eav);
+
+        return dynamoDBMapper.scan(typeParameterClass, scanExpression);
     }
 
     public void update(String id, T t) {
+        // TODO: testar
         dynamoDBMapper.save(t, new DynamoDBSaveExpression()
                 .withExpectedEntry("id", new ExpectedAttributeValue(
                         new AttributeValue().withS(id))));
     }
 
-    // TODO: verificar se manteremos ou não 2
-    public void delete(String id) {
-        // TODO: getById quebrando o metodo (DynamoDBMappingException: Quadro[tipo]; no RANGE key value present)
-        T item = getById(id);
-        dynamoDBMapper.delete(item, new DynamoDBDeleteExpression()
+    public void delete(String hashKey, String rangeKey) {
+        Optional<T> item = getByHashKeyAndRangeKey(hashKey, rangeKey);
+
+        if(item.isEmpty()) {
+            throw new RuntimeException("Item nao existente");
+        }
+
+        dynamoDBMapper.delete(item.get(), new DynamoDBDeleteExpression()
                 .withExpectedEntry("id", new ExpectedAttributeValue(
-                        new AttributeValue().withS(id))));
+                        new AttributeValue().withS(hashKey)))
+                .withExpectedEntry("tipo", new ExpectedAttributeValue(
+                        new AttributeValue().withS(rangeKey)
+                )));
     }
 
 }
