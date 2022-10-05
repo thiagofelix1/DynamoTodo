@@ -5,9 +5,7 @@ import com.itau.todo.domain.repository.QuadroRepository;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-@EnableScan
 public class DynamoDbQuadroRepository extends DynamoDbCrud<Quadro> implements QuadroRepository {
 
     public DynamoDbQuadroRepository() { super(Quadro.class); }

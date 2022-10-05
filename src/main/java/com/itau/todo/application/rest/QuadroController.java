@@ -1,15 +1,12 @@
 package com.itau.todo.application.rest;
 
 import com.itau.todo.application.request.QuadroRequest;
-import com.itau.todo.application.response.QuadroResponse;
 import com.itau.todo.domain.entities.Quadro;
+import com.itau.todo.domain.repository.QuadroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -18,9 +15,12 @@ import javax.validation.Valid;
 @RequestMapping("/quadro")
 public class QuadroController {
 
+    private final QuadroRepository quadroRepository;
+
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Valid QuadroRequest quadroRequest){
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid QuadroRequest quadroRequest) {
         Quadro quadro = new Quadro(quadroRequest.getName(), quadroRequest.getTipo());
+        quadroRepository.save(quadro);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(quadro);
     }

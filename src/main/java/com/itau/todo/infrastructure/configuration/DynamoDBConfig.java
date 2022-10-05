@@ -8,11 +8,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.itau.todo.domain.entities.Quadro;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 
 @Configuration
@@ -32,6 +34,7 @@ public class DynamoDBConfig {
     private String dynamoDBRegion;
 
     @Bean
+    @Primary
     public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB) {
         return new DynamoDBMapper(amazonDynamoDB);
     }
@@ -60,7 +63,7 @@ public class DynamoDBConfig {
 //        AmazonDynamoDB amazonDynamoDB = event.getApplicationContext().getBean(AmazonDynamoDB.class);
 //        DynamoDBMapper dynamoDBMapper = event.getApplicationContext().getBean(DynamoDBMapper.class);
 //
-//        CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Tarefa.class);
+//        CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Quadro.class);
 //
 //        if (!amazonDynamoDB.listTables().getTableNames().contains(createTableRequest.getTableName())) {
 //            createTableRequest.setProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
