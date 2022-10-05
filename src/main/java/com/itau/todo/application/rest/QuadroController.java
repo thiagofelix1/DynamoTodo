@@ -19,15 +19,15 @@ public class QuadroController {
 
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody @Valid QuadroRequest quadroRequest) {
-        Quadro quadro = new Quadro(quadroRequest.getName(), quadroRequest.getTipo());
+        Quadro quadro = new Quadro(quadroRequest.getTipo(), quadroRequest.getName());
         quadroRepository.save(quadro);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(quadro);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> apagar(@PathVariable String id) {
-        quadroRepository.delete(id);
+    @DeleteMapping("/{hashKey}/{rangeKey}")
+    public ResponseEntity<?> apagar(@PathVariable String hashKey, @PathVariable String rangeKey) {
+        quadroRepository.delete(hashKey, rangeKey);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

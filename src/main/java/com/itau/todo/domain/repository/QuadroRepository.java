@@ -14,5 +14,9 @@ public interface QuadroRepository {
 
     void update(String id, Quadro quadro);
 
+    // TODO: verificar se manteremos ou não 2
     void delete(String id);
+
+    void delete(String hashKey, String rangeKey);
+
 }

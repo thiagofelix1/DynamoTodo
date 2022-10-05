@@ -28,6 +28,7 @@ public class DynamoDbCrud<T> {
         return t;
     }
 
+    // TODO: verificar se manteremos ou não
     public T getById(String id) {
         return dynamoDBMapper.load(typeParameterClass, id);
     }
@@ -42,6 +43,7 @@ public class DynamoDbCrud<T> {
                         new AttributeValue().withS(id))));
     }
 
+    // TODO: verificar se manteremos ou não 2
     public void delete(String id) {
         // TODO: getById quebrando o metodo (DynamoDBMappingException: Quadro[tipo]; no RANGE key value present)
         T item = getById(id);
