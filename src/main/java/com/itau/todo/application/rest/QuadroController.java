@@ -17,12 +17,29 @@ public class QuadroController {
 
     private final QuadroRepository quadroRepository;
 
+    @GetMapping
+    public ResponseEntity<?> listar() {
+        return ResponseEntity.ok(quadroRepository.findAll());
+    }
+
+    @GetMapping("/{hashKey}")
+    public ResponseEntity<?> getPorId(@PathVariable String hashKey) {
+        // TODO: fazer de verdade
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody @Valid QuadroRequest quadroRequest) {
         Quadro quadro = new Quadro(quadroRequest.getTipo(), quadroRequest.getName());
         quadroRepository.save(quadro);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(quadro);
+    }
+
+    @PutMapping("{}")
+    public ResponseEntity<?> atualizar() {
+        // TODO: fazer de verdade2
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{hashKey}/{rangeKey}")
